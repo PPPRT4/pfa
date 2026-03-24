@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: pfa_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pfa_db}
+      POSTGRES_USER: ${POSTGRES_USER:-pfa_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pfa_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

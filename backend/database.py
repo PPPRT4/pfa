@@ -23,4 +23,4 @@ def get_db():#inject db session
     try:
         yield db#sends the session to the endpoint
     finally:
-        db.close()
+        db.close()  

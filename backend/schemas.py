@@ -8,3 +8,12 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class NoteCreate(BaseModel):
+    title: str
+    content: str
+
+
+class PromptRequest(BaseModel):
+    prompt: str
