@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+import os
+from google import genai
 
 try:
     from ..database import get_db
@@ -12,6 +14,8 @@ except ImportError:
 
 router = APIRouter()
 
+
+client = genai.Client()
 
 @router.post("/note")
 def add_note(note: NoteCreate, db: Session = Depends(get_db)):
@@ -32,6 +36,15 @@ def add_note(note: NoteCreate, db: Session = Depends(get_db)):
 
 @router.post("/prompt")
 def get_prompt_result(payload: PromptRequest):
-    return {
-        "result": f"Dummy AI response for prompt: {payload.prompt}"
-    }
+    try :
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=payload.prompt
+        )
+        return {
+            "result": response.text
+        }
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
