@@ -36,6 +36,14 @@ pip install -r requirements.txt
 
 ## 5) Run backend
 
+Run DB migrations first:
+
+```bash
+alembic upgrade head
+```
+
+Then start the API:
+
 ```bash
 uvicorn main:app --reload
 ```

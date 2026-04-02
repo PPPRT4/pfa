@@ -11,7 +11,7 @@ class UserLogin(BaseModel):
 
 
 class NoteCreate(BaseModel):
-    title: str
+    title: str | None = None
     content: str
 
 
