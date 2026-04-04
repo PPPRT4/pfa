@@ -1,9 +1,11 @@
 import os
 import sys
+os.environ.setdefault("GROQ_API_KEY", "")
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from google import genai
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage, SystemMessage
 
 try:
     from ..database import get_db
@@ -18,16 +20,14 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
-from ai.note_analyzer import analyze_note_with_gemini
+from ai.note_analyzer import analyze_note_with_langchain
 
 router = APIRouter()
-
-
-client = genai.Client()
+llm = ChatGroq(model="llama-3.3-70b-versatile")
 
 
 def create_note_payload(note: NoteCreate, db: Session):
-    ai_result = analyze_note_with_gemini(note.content)
+    ai_result = analyze_note_with_langchain(note.content)
     new_note = Note(
         title=note.title or "Untitled",
         content=note.content,
@@ -36,7 +36,6 @@ def create_note_payload(note: NoteCreate, db: Session):
     db.add(new_note)
     db.commit()
     db.refresh(new_note)
-
     return {
         "id": new_note.id,
         "title": new_note.title,
@@ -45,25 +44,20 @@ def create_note_payload(note: NoteCreate, db: Session):
         "atomic_note": ai_result["atomic_note"],
     }
 
+
 @router.post("/add-note")
 def add_note(note: NoteCreate, db: Session = Depends(get_db)):
-    return {
-        "message": "Note created successfully",
-        "note": create_note_payload(note, db),
-    }
+    return {"message": "Note created successfully", "note": create_note_payload(note, db)}
 
 
 @router.post("/prompt")
 def get_prompt_result(payload: PromptRequest):
-    try :
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=payload.prompt
-        )
-        return {
-            "result": response.text
-        }
+    try:
+        messages = [
+            SystemMessage(content="You are a helpful second-brain assistant."),
+            HumanMessage(content=payload.prompt)
+        ]
+        response = llm.invoke(messages)
+        return {"result": response.content}
     except Exception as e:
-        return {
-            "error": str(e)
-        }
+        return {"error": str(e)}
