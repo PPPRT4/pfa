@@ -1,6 +1,5 @@
 import os
 import sys
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from google import genai
@@ -19,6 +18,8 @@ if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
 from ai.note_analyzer import analyze_note_with_gemini
+from ai.notes_ai import ajouter_note
+from ai.rag import rag_answer
 
 router = APIRouter()
 
@@ -37,6 +38,11 @@ def create_note_payload(note: NoteCreate, db: Session):
     db.commit()
     db.refresh(new_note)
 
+    ajouter_note(
+        str(new_note.id),
+        ai_result["atomic_note"],
+        ai_result["topic"]
+    )
     return {
         "id": new_note.id,
         "title": new_note.title,
@@ -56,13 +62,7 @@ def add_note(note: NoteCreate, db: Session = Depends(get_db)):
 @router.post("/prompt")
 def get_prompt_result(payload: PromptRequest):
     try :
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=payload.prompt
-        )
-        return {
-            "result": response.text
-        }
+        return rag_answer(payload.prompt)
     except Exception as e:
         return {
             "error": str(e)
