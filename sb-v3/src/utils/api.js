@@ -1,10 +1,6 @@
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
-const TIMEOUT  = 3000; // ms
+const TIMEOUT  = 3000;
 
-/**
- * POST /add-note
- * Returns "success" | "error"
- */
 export async function postNote(content) {
   try {
     const controller = new AbortController();
@@ -18,8 +14,12 @@ export async function postNote(content) {
     });
 
     clearTimeout(timer);
-    return res.ok ? "success" : "error";
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    return null;
   } catch {
-    return "error";
+    return null;
   }
 }

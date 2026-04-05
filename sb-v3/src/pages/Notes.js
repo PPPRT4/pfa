@@ -4,10 +4,9 @@ import AddNote    from "../components/AddNote";
 import NoteCard   from "../components/NoteCard";
 import StatsPanel from "../components/StatsPanel";
 import ChatView   from "../components/ChatView";
-import { classifyNote, NOTE_TYPES } from "../utils/classifier";
+import { NOTE_TYPES } from "../utils/classifier";
 import { postNote } from "../utils/api";
 
-/* ── Icons ── */
 const IconMenu = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
     <path d="M3 4.5h12M3 9h12M3 13.5h12"
@@ -30,9 +29,6 @@ const greet = () => {
 
 const PAGE_TITLES = { add: "New note", notes: "All notes", chat: "AI Chat" };
 
-/* ════════════════════════════════════════
-   NOTES PAGE (main shell)
-════════════════════════════════════════ */
 export default function Notes() {
   const [notes,     setNotes]     = useState([]);
   const [view,      setView]      = useState("add");
@@ -43,7 +39,6 @@ export default function Notes() {
 
   const username = sessionStorage.getItem("sb_user") || "User";
 
-  /* Restore from sessionStorage */
   useEffect(() => {
     try {
       const saved = JSON.parse(sessionStorage.getItem("sb_notes") || "[]");
@@ -51,37 +46,31 @@ export default function Notes() {
     } catch {}
   }, []);
 
-  /* Persist on every change */
   useEffect(() => {
     sessionStorage.setItem("sb_notes", JSON.stringify(notes));
   }, [notes]);
 
-  /* ── Add note handler ── */
   const handleAdd = async (content) => {
     const id        = Date.now();
-    const apiStatus = await postNote(content);
+    const apiResult = await postNote(content);
     const newNote   = {
       id, content,
       createdAt:  new Date().toISOString(),
-      aiLoading:  true,
-      aiResult:   null,
-      apiStatus,
+      aiLoading:  false,
+      aiResult:   apiResult?.note ? {
+       type: apiResult.note.topic,
+        summary:  apiResult.note.atomic_note || content,
+        keywords: content.toLowerCase().split(" ").slice(0, 5),
+      } : null,
+      apiStatus: apiResult ? "success" : "error",
     };
 
     setNotes((prev) => [newNote, ...prev]);
     setView("notes");
 
-    /* Simulate AI classification delay */
-    await new Promise((r) => setTimeout(r, 1000));
-    const ai = classifyNote(content);
-    setNotes((prev) =>
-      prev.map((n) => n.id === id ? { ...n, aiResult: ai, aiLoading: false } : n)
-    );
-
-    return apiStatus;
+    return apiResult ? "success" : "error";
   };
 
-  /* ── Filtered + searched notes ── */
   const visible = notes.filter((n) => {
     const matchFilter = filter === "all" || n.aiResult?.type === filter;
     const matchSearch = !search || n.content.toLowerCase().includes(search.toLowerCase());
@@ -90,8 +79,6 @@ export default function Notes() {
 
   return (
     <div className="flex min-h-screen bg-ink-900">
-
-      {/* Sidebar */}
       <Sidebar
         active={view}
         onNav={(v) => { setView(v); if (v === "chat") setSearch(""); }}
@@ -101,10 +88,7 @@ export default function Notes() {
         onClose={() => setMobileNav(false)}
       />
 
-      {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden min-h-screen">
-
-        {/* ── Top bar ── */}
         <header className="sticky top-0 z-10 h-12 flex items-center gap-3 px-5
                            bg-ink-900 border-b border-ink-700 flex-shrink-0">
           <button
@@ -142,7 +126,6 @@ export default function Notes() {
               </div>
             )}
 
-            {/* Chat context pill — shows in chat view */}
             {view === "chat" && (
               <div className="flex items-center gap-2 text-xs text-gold-400
                               bg-gold-400/10 border border-gold-400/20 rounded-full px-3 py-1">
@@ -165,10 +148,8 @@ export default function Notes() {
           </div>
         </header>
 
-        {/* ── Page content ── */}
         <main className={`flex-1 px-5 py-6 ${view === "chat" ? "overflow-hidden flex flex-col" : "overflow-y-auto"}`}>
 
-          {/* ADD VIEW */}
           {view === "add" && (
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 max-w-5xl mx-auto">
               <AddNote onAdd={handleAdd} />
@@ -178,7 +159,6 @@ export default function Notes() {
             </div>
           )}
 
-          {/* NOTES VIEW */}
           {view === "notes" && (
             <div className="max-w-2xl mx-auto">
               <div className="flex items-start justify-between mb-5">
@@ -199,7 +179,6 @@ export default function Notes() {
                 </button>
               </div>
 
-              {/* Filter chips */}
               <div className="flex gap-2 flex-wrap mb-5">
                 {["all", ...NOTE_TYPES].map((f) => (
                   <button
@@ -216,7 +195,6 @@ export default function Notes() {
                 ))}
               </div>
 
-              {/* Empty state */}
               {notes.length === 0 && (
                 <div className="text-center py-20 card">
                   <span className="text-5xl">📭</span>
@@ -232,7 +210,6 @@ export default function Notes() {
                 </div>
               )}
 
-              {/* No results */}
               {notes.length > 0 && visible.length === 0 && (
                 <div className="text-center py-16 card">
                   <span className="text-4xl">🔍</span>
@@ -249,7 +226,6 @@ export default function Notes() {
             </div>
           )}
 
-          {/* CHAT VIEW */}
           {view === "chat" && (
             <div className="flex-1 max-w-3xl mx-auto w-full flex flex-col min-h-0"
                  style={{ height: "calc(100vh - 6rem)" }}>
@@ -262,7 +238,6 @@ export default function Notes() {
           )}
         </main>
 
-        {/* ── Footer ── */}
         <footer className="flex items-center justify-between px-5 py-2
                            border-t border-ink-700 text-xs text-ink-700 flex-shrink-0">
           <span>Second Brain · AI Notes + Chat</span>
