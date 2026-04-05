@@ -15,5 +15,9 @@ class NoteCreate(BaseModel):
     content: str
 
 
+class NoteUpdate(BaseModel):
+    content: str
+
+
 class PromptRequest(BaseModel):
     prompt: str
