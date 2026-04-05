@@ -78,7 +78,7 @@ function MessageBubble({ msg, username }) {
           className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
             isUser
               ? "bg-gold-400 text-ink-900 rounded-br-sm"
-              : "bg-ink-800 border border-ink-700 text-ink-300 rounded-bl-sm"
+                : "bg-ink-800 border border-ink-700 text-white rounded-bl-sm"
           }`}
         >
           {msg.content}
