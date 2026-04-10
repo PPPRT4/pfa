@@ -20,9 +20,12 @@ if PROJECT_ROOT not in sys.path:
 from ai.note_analyzer import analyze_note_with_gemini
 from ai.notes_ai import ajouter_note
 from ai.rag import rag_answer
+from Langgraph_agent.langgraph_agent import GraphState
 
+from Langgraph_agent.langgraph_agent import build_graph
 router = APIRouter()
 
+graph_app = build_graph()
 
 client = genai.Client()
 
@@ -57,12 +60,12 @@ def add_note(note: NoteCreate, db: Session = Depends(get_db)):
         "message": "Note created successfully",
         "note": create_note_payload(note, db),
     }
-
-
+  
 @router.post("/prompt")
 def get_prompt_result(payload: PromptRequest):
     try :
-        return rag_answer(payload.prompt)
+        result = graph_app.invoke({"query": payload.prompt})
+        return {"result": result.get("answer", "No answer")}
     except Exception as e:
         return {
             "error": str(e)

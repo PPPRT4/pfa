@@ -17,7 +17,7 @@ def chercher_notes(question, nb_resultats=3):
     docs=resultats["documents"][0]
     if isinstance(docs, str):
         docs = [docs]
-    for doc in resultats["documents"][0]:
+    for doc in docs:
         print(f"  → {doc}")
     return docs
 
