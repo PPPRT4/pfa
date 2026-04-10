@@ -26,6 +26,19 @@ const IconClear = () => (
   </svg>
 );
 
+const IconCopy = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+    <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+    <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 /* ── Typing indicator ── */
 function TypingIndicator() {
   return (
@@ -51,13 +64,21 @@ function TypingIndicator() {
 /* ── Message bubble ── */
 function MessageBubble({ msg, username }) {
   const isUser = msg.role === "user";
+  const [copied, setCopied] = useState(false);
   const timeStr = msg.time
     ? new Date(msg.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : "";
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(msg.content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <div
-      className={`flex gap-2.5 max-w-[85%] animate-fade-up ${
+      className={`flex gap-2.5 max-w-[85%] animate-fade-up group ${
         isUser ? "self-end flex-row-reverse" : "self-start"
       }`}
     >
@@ -74,14 +95,31 @@ function MessageBubble({ msg, username }) {
 
       {/* Content */}
       <div>
-        <div
-          className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-            isUser
-              ? "bg-gold-400 text-ink-900 rounded-br-sm"
+        <div className="relative">
+          <div
+            className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+              isUser
+                ? "bg-gold-400 text-ink-900 rounded-br-sm"
                 : "bg-ink-800 border border-ink-700 text-white rounded-bl-sm"
-          }`}
-        >
-          {msg.content}
+            }`}
+          >
+            {msg.content}
+          </div>
+
+          {/* Copy button */}
+          <button
+            onClick={handleCopy}
+            title="Copy message"
+            className={`absolute top-1.5 ${isUser ? "left-[-28px]" : "right-[-28px]"}
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                        p-1.5 rounded-lg
+                        ${copied
+                          ? "text-green-400"
+                          : "text-ink-500 hover:text-ink-300 hover:bg-ink-700"
+                        }`}
+          >
+            {copied ? <IconCheck /> : <IconCopy />}
+          </button>
         </div>
 
         {/* Referenced note */}
@@ -277,7 +315,7 @@ export default function ChatView({ notes, username }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* ── Suggestions (shown only when last message is from assistant) ── */}
+      {/* ── Suggestions ── */}
       {!loading && messages[messages.length - 1]?.role === "assistant" && (
         <Suggestions notes={notes} onSelect={(s) => { setInput(s); taRef.current?.focus(); }} />
       )}

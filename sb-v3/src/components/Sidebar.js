@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { TYPE_META } from "../utils/classifier";
 
-/* ── Icons ── */
 const IconPlus = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
     <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.25" />
@@ -29,11 +28,19 @@ const IconLogout = () => (
       strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+const IconEval = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M2 10L5 7l2.5 2.5L11 4" stroke="currentColor" strokeWidth="1.25"
+      strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.25" />
+  </svg>
+);
 
 const NAV = [
-  { id: "add",   label: "Add note",  Icon: IconPlus  },
-  { id: "notes", label: "All notes", Icon: IconNotes },
-  { id: "chat",  label: "AI Chat",   Icon: IconChat,  highlight: true },
+  { id: "add",   label: "Add note",   Icon: IconPlus  },
+  { id: "notes", label: "All notes",  Icon: IconNotes },
+  { id: "chat",  label: "AI Chat",    Icon: IconChat, highlight: true },
+  { id: "eval",  label: "Evaluation", Icon: IconEval  },
 ];
 
 export default function Sidebar({ active, onNav, notes, chatCount, mobileOpen, onClose }) {
@@ -59,15 +66,13 @@ export default function Sidebar({ active, onNav, notes, chatCount, mobileOpen, o
         />
       )}
 
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-30 w-56 flex flex-col
-          bg-ink-900 border-r border-ink-700
-          transition-transform duration-300 ease-out
-          lg:relative lg:translate-x-0 lg:z-auto
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
-      >
+      <aside className={`
+        fixed inset-y-0 left-0 z-30 w-56 flex flex-col
+        bg-ink-900 border-r border-ink-700
+        transition-transform duration-300 ease-out
+        lg:relative lg:translate-x-0 lg:z-auto
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+      `}>
         {/* Brand */}
         <div className="flex items-center gap-2.5 px-4 py-5 border-b border-ink-700">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600
@@ -95,7 +100,7 @@ export default function Sidebar({ active, onNav, notes, chatCount, mobileOpen, o
               onClick={() => { onNav(id); onClose?.(); }}
               className={`nav-link ${active === id ? "active" : ""} ${
                 highlight && active !== id ? "text-gold-400/70 hover:text-gold-400" : ""
-              }`}
+              } ${id === "eval" && active !== id ? "text-emerald-400/70 hover:text-emerald-400" : ""}`}
             >
               <Icon />
               {label}

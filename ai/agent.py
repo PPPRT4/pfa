@@ -1,66 +1,56 @@
 import os
+import sys
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+os.environ["GROQ_API_KEY"] = os.environ.get("GROQ_API_KEY", "")
+
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from fastapi import APIRouter
 from pydantic import BaseModel
+from ai.vector_store import search_notes
 
-os.environ.setdefault("GROQ_API_KEY", "")
+llm = ChatGroq(model="llama-3.3-70b-versatile")
 
-REACT_SYSTEM_PROMPT = """You are an intelligent second-brain assistant using the ReAct reasoning pattern.
-
-For every user question, you MUST follow this exact structure:
-
-Thought 1: [Analyze what the user is really asking. What do they need?]
-Thought 2: [Think about what information or reasoning is needed to answer well.]
-Thought 3: [Formulate your approach before giving the final answer.]
-Final Answer: [Your complete, helpful answer based on your reasoning above.]
-
-Rules:
-- ALWAYS show your thoughts before the final answer
-- The Final Answer must directly address the user's question
-- You are helping users organize their second brain (notes, ideas, tasks, research)
-"""
 
 class ReActAgent:
-    def __init__(self, model: str = "llama-3.3-70b-versatile"):
-        self.llm = ChatGroq(model=model)
+    def __init__(self):
         self.conversation_history = []
 
     def chat(self, user_message: str) -> dict:
+        # Search relevant notes from Chroma
+        relevant = search_notes(user_message, n_results=3)
+        context = ""
+        if relevant:
+            context = "Here are relevant notes from the user's Second Brain:\n"
+            for r in relevant:
+                context += f"- [{r['topic']}] {r['content']}\n"
+
+        system = f"""You are an intelligent second-brain assistant.
+You help the user recall and reason about their notes.
+
+{context}
+
+Answer the user's question based on their notes above.
+If no relevant notes exist, answer from your general knowledge and clearly say 
+that this answer comes from your general knowledge, not from their notes."""
+
         self.conversation_history.append(HumanMessage(content=user_message))
-        messages = [SystemMessage(content=REACT_SYSTEM_PROMPT)] + self.conversation_history
-        response = self.llm.invoke(messages)
-        full_response = response.content
-        self.conversation_history.append(AIMessage(content=full_response))
-        thoughts, final_answer = self._parse(full_response)
-        return {"full_response": full_response, "thoughts": thoughts, "final_answer": final_answer}
+        messages = [SystemMessage(content=system)] + self.conversation_history
+        response = llm.invoke(messages)
+        answer = response.content
+        self.conversation_history.append(AIMessage(content=answer))
+        return {
+            "full_response": answer,
+            "thoughts": [],
+            "final_answer": answer
+        }
 
     def reset(self):
         self.conversation_history = []
-
-    def _parse(self, response: str):
-        lines = response.strip().split("\n")
-        thoughts = []
-        final_answer_lines = []
-        in_final = False
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            if line.startswith("Thought") and ":" in line:
-                thoughts.append(line.split(":", 1)[1].strip())
-                in_final = False
-            elif line.startswith("Final Answer:"):
-                start = line.split(":", 1)[1].strip()
-                if start:
-                    final_answer_lines.append(start)
-                in_final = True
-            elif in_final:
-                final_answer_lines.append(line)
-        final_answer = "\n".join(final_answer_lines).strip()
-        if not final_answer:
-            final_answer = response.strip()
-        return thoughts, final_answer
 
 
 agent_router = APIRouter(prefix="/agent", tags=["agent"])

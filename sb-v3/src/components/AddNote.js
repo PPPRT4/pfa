@@ -47,7 +47,7 @@ export default function AddNote({ onAdd }) {
 
       {/* Section header */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white">Capture a thought</h2>
+       <h2 className="text-lg sm:text-xl font-semibold text-white">Capture a          thought</h2>
         <p className="text-sm text-ink-400 mt-1">
           Write anything — AI will classify and summarize it instantly.
         </p>
@@ -131,7 +131,7 @@ export default function AddNote({ onAdd }) {
           <button
             onClick={handleSubmit}
             disabled={loading || !text.trim() || charOver}
-            className="btn-primary flex-1 py-2.5"
+            className="btn-primary flex-1 py-2.5 text-xs sm:text-sm"
           >
             {loading ? (
               <>

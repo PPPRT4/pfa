@@ -4,6 +4,7 @@ import AddNote    from "../components/AddNote";
 import NoteCard   from "../components/NoteCard";
 import StatsPanel from "../components/StatsPanel";
 import ChatView   from "../components/ChatView";
+import EvalView  from "../components/EvalView";
 import { NOTE_TYPES } from "../utils/classifier";
 import { postNote } from "../utils/api";
 
@@ -27,7 +28,7 @@ const greet = () => {
   return "Good evening";
 };
 
-const PAGE_TITLES = { add: "New note", notes: "All notes", chat: "AI Chat" };
+const PAGE_TITLES = { add: "New note", notes: "All notes", chat: "AI Chat", eval: "Evaluation" };
 
 export default function Notes() {
   const [notes,     setNotes]     = useState([]);
@@ -225,7 +226,11 @@ export default function Notes() {
               </div>
             </div>
           )}
-
+          {view === "eval" && (
+            <div className="max-w-2xl mx-auto w-full">
+              <EvalView />
+            </div>
+          )}
           {view === "chat" && (
             <div className="flex-1 max-w-3xl mx-auto w-full flex flex-col min-h-0"
                  style={{ height: "calc(100vh - 6rem)" }}>
