@@ -14,6 +14,13 @@ const IconNotes = () => (
     <path d="M4 5.5h6M4 8h4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
   </svg>
 );
+const IconEval = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M2 10L5 7l2.5 2.5L11 4" stroke="currentColor" strokeWidth="1.25"
+      strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.25" />
+  </svg>
+);
 const IconChat = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
     <path d="M1.5 2.5h11a.5.5 0 01.5.5v6a.5.5 0 01-.5.5H4.5L2 12V3a.5.5 0 01-.5-.5z"
