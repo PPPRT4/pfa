@@ -1,1 +1,13 @@
 .env
+.env.*
+!.env.example
+
+# Editor settings
+.vscode/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Local vector database artifacts
+ai/chroma_db/
