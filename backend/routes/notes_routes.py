@@ -27,6 +27,8 @@ router = APIRouter()
 
 graph_app = build_graph()
 
+
+
 client = genai.Client()
 
 
