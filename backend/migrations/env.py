@@ -16,10 +16,14 @@ if config.config_file_name is not None:
 
 CURRENT_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
+ROOT_DIR = os.path.abspath(os.path.join(PROJECT_DIR, ".."))
 if PROJECT_DIR not in sys.path:
     sys.path.append(PROJECT_DIR)
 
-load_dotenv(os.path.join(PROJECT_DIR, ".env"))
+# Load .env from project root
+from dotenv import find_dotenv
+dotenv_path = find_dotenv(usecwd=True) or os.path.join(ROOT_DIR, ".env")
+load_dotenv(dotenv_path=dotenv_path)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
