@@ -12,15 +12,16 @@ try:
 except ImportError:
     from database import get_db
     from models import Note
-    from schemas import ChatRequest, NoteCreate, NoteUpdate
+    from schemas import PromptRequest, NoteCreate, NoteUpdate
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
 from ai.note_analyzer import analyze_note_with_gemini
-from ai.notes_ai import ajouter_note
+from mcp import Client
 
+vector_mcp = Client("http://localhost:8001")
 router = APIRouter()
 
 
@@ -39,7 +40,12 @@ def create_note_payload(note: NoteCreate, db: Session):
     db.refresh(new_note)
 
     try:
-        ajouter_note(str(new_note.id), new_note.content)
+        vector_mcp.call(
+          "add_note",
+        {
+            "id": str(new_note.id),
+            "text": new_note.content
+        })
     except Exception:
         # Keep API note creation resilient if Chroma is temporarily unavailable.
         pass
