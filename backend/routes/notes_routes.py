@@ -3,7 +3,8 @@ import sys
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from google import genai
+#from google import genai
+import requests
 
 try:
     from ..database import get_db
@@ -13,20 +14,19 @@ except ImportError:
     from database import get_db
     from models import Note
     from schemas import PromptRequest, NoteCreate, NoteUpdate
-
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
 from ai.note_analyzer import analyze_note_with_gemini
-from mcp import Client
+from ai.agent import build_agent
 
-vector_mcp = Client("http://localhost:8001")
+
 router = APIRouter()
+MCP_URL = "http://localhost:8001"
 
-
-client = genai.Client()
-
+#client = genai.Client()
+graph_app = build_agent()
 
 def create_note_payload(note: NoteCreate, db: Session):
     ai_result = analyze_note_with_gemini(note.content)
@@ -40,15 +40,15 @@ def create_note_payload(note: NoteCreate, db: Session):
     db.refresh(new_note)
 
     try:
-        vector_mcp.call(
-          "add_note",
-        {
-            "id": str(new_note.id),
-            "text": new_note.content
-        })
-    except Exception:
-        # Keep API note creation resilient if Chroma is temporarily unavailable.
-        pass
+        requests.post(
+            f"{MCP_URL}/add_note",
+            json={
+                "id": str(new_note.id),
+                "text": new_note.content
+            }
+        )
+    except Exception as e:
+        print("Vector DB error:", e)
     
 
     return {
@@ -128,12 +128,9 @@ def update_note(note_id: int, payload: NoteUpdate, db: Session = Depends(get_db)
 @router.post("/chat")
 def get_chat_result(payload: PromptRequest):
     try :
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=payload.prompt
-        )
-        return {
-            "result": response.text
-        }
+        result = graph_app.invoke({"user_query": payload.prompt},
+                                  config={"configurable": {"thread_id": "user-1"}})
+        
+        return {"answer": result.get("answer", "No answer")}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,11 +1,24 @@
 import json
+import os
+from dotenv import load_dotenv
+from langchain_groq import ChatGroq
 
-from google import genai
+load_dotenv()
 
 ALLOWED_TOPICS = {"Idea", "Bug", "Reminder", "Task", "Research"}
-_client = genai.Client()
 
+# -----------------------------
+# Groq LLM
+# -----------------------------
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    api_key=os.getenv("GROQ_API_KEY"),
+    temperature=0.2
+)
 
+# -----------------------------
+# Main function
+# -----------------------------
 def analyze_note_with_gemini(content: str) -> dict:
     prompt = f"""
 You are classifying a note for a second-brain app.
@@ -21,12 +34,10 @@ Return ONLY valid JSON (no markdown, no extra text) with this exact shape:
 """
 
     try:
-        response = _client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-        raw_text = (response.text or "").strip()
+        response = llm.invoke(prompt)
+        raw_text = (response.content or "").strip()
 
+        # clean possible code blocks
         if raw_text.startswith("```"):
             raw_text = raw_text.strip("`")
             if raw_text.startswith("json"):
@@ -47,8 +58,8 @@ Return ONLY valid JSON (no markdown, no extra text) with this exact shape:
             "topic": topic,
             "atomic_note": atomic_note,
         }
+
     except Exception:
-        # Keep note creation resilient if AI output is malformed or unavailable.
         return {
             "topic": "Idea",
             "atomic_note": content.strip(),
