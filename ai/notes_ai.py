@@ -5,9 +5,9 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 client = chromadb.PersistentClient(path="./chroma_db")
 collection = client.get_or_create_collection("notes")
 
-def ajouter_note(id, texte):
+def ajouter_note(id, texte, topic):
     vecteur = model.encode(texte).tolist()
-    collection.add(documents=[texte], embeddings=[vecteur], ids=[id])
+    collection.add(documents=[texte], embeddings=[vecteur], ids=[id],metadatas=[{"topic": topic}])
     print(f"✅ Note ajoutée : {texte}")
 
 def chercher_notes(question, nb_resultats=3):
