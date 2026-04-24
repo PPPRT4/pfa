@@ -1,4 +1,5 @@
-from mcp.server import FastMCP
+from fastmcp import FastMCP
+
 from sentence_transformers import SentenceTransformer
 import chromadb
 
@@ -48,4 +49,4 @@ def add_note(id: str, text: str):
     }
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="http", host="0.0.0.0", port=8005)
