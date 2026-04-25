@@ -1,40 +1,11 @@
 from langgraph.graph import StateGraph, START, END
-# from ai.notes_ai import chercher_notes
+from ai.notes_ai import chercher_notes
 from google import genai
 from typing import TypedDict, List, Optional
 from groq import Groq
 from langchain_core.tracers import LangChainTracer
 from dotenv import load_dotenv
 import os
-from mcp import ClientSession
-import asyncio
-from mcp.client.stdio import stdio_client, StdioServerParameters
-from mcp import ClientSession
-
-import traceback
-
-async def mcp_search_notes(query):
-    try:
-        server = StdioServerParameters(
-            command="python",
-            args=["ai/mcp_notes_server.py"]
-        )
-
-        async with stdio_client(server) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-
-                result = await session.call_tool(
-                    "search_notes",
-                    {"query": query, "k": 3}
-                )
-
-                return result.content
-
-    except Exception as e:
-        print("🔥 FULL ERROR:")
-        traceback.print_exc()
-        return str(e)
 
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
@@ -93,13 +64,9 @@ def route(state):
 
 def retrieve(state):
     queries = state.get("queries", [state.get("query", "")])
-
     all_docs = []
-
     for q in queries:
-        docs = asyncio.run(mcp_search_notes(q))
-        all_docs.extend(docs)
-
+        all_docs.extend(chercher_notes(q))
     return {"docs": all_docs}
 
 
