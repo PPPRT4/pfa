@@ -2,7 +2,8 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 # Setup
 model = SentenceTransformer("all-MiniLM-L6-v2")
-client = chromadb.PersistentClient(path="./chroma_db")
+#client = chromadb.PersistentClient(path="./chroma_db")
+client=chromadb.HttpClient(host="localhost", port=8010)
 collection = client.get_or_create_collection("notes")
 
 def ajouter_note(id, texte, topic):
