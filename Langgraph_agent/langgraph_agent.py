@@ -6,6 +6,7 @@ from groq import Groq
 from langchain_core.tracers import LangChainTracer
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
@@ -45,13 +46,18 @@ def decide_tool(state):
     query = state["query"]
 
     prompt = f"""
-    Should I:
-    1. Search notes
-    2. Answer directly
+
+If the question needs external knowledge → SEARCH
+If it can be answered directly → DIRECT
 
     Query: {query}
+Return ONLY:
+SEARCH
+or
+DIRECT
+No punctuation. No explanation.
 
-    Reply: SEARCH or DIRECT
+   
     """
 
     text = safe_generate(prompt)
@@ -90,7 +96,12 @@ def generate(state):
     Question:
     {query}
 
-    Answer clearly.
+    Rules:
+    - Do NOT rewrite the question
+    - Do NOT suggest new queries
+    - Do NOT explain query improvement
+    - Answer directly and clearly
+    - If unrelated, say "no clear relation"
     """
 
     answer = safe_generate(prompt)
@@ -101,23 +112,8 @@ def generate(state):
     ]
 
     return {"answer": answer,  "query": query, "docs": docs, "history": new_history}
-def rerank(state):
-    docs = state.get("docs", [])
-    query = state.get("query", "")
 
-    prompt = f"""
-    Select the most relevant notes for this query:
 
-    Query: {query}
-
-    Notes:
-    {docs}
-
-    Return top 3.
-    """
-
-    text = safe_generate(prompt)
-    return {"docs": text.split("\n")}
 
 def evaluate(state):
     docs = state.get("docs", [])
@@ -126,21 +122,39 @@ def evaluate(state):
     context = "\n".join(docs)
 
     prompt = f"""
-    Is this answer supported by the notes?
+Is this answer supported by the notes?
 
-    Notes:
-    {context}
+Notes:
+{context}
 
-    Answer:
-    {answer}
+Answer:
+{answer}
 
-    Reply ONLY YES or NO.
-    """
+Return ONLY valid JSON:
+{{
+  "supported": true
+}}
+"""
 
     text = safe_generate(prompt)
 
-    return {"is_good": "YES" in text.upper(),  "query": state.get("query", ""), "docs": docs, "answer": answer}
+    try:
+        # clean possible markdown formatting
+        text = text.replace("```json", "").replace("```", "").strip()
 
+        result = json.loads(text)
+        supported = result.get("supported", False)
+
+    except Exception as e:
+        print("[evaluate error]", e)
+        supported = False
+
+    return {
+        "is_good": supported,
+        "query": state.get("query", ""),
+        "docs": docs,
+        "answer": answer
+    }
 
 def rewrite(state):
     query = state.get("query", "")
@@ -158,15 +172,22 @@ def plan(state):
     query = state.get("query", "")
 
     prompt = f"""
-    Break this question into 2-3 smaller search queries:
-    {query}
+    Break this question into 2-3 smaller search queries.
+        Return ONLY valid JSON array:
+["query1", "query2"]
+   Query: {query}
 
-    Return as a list.
+
     """
 
     text = safe_generate(prompt)
 
-    queries = text.split("\n")
+    try:
+        text = text.replace("```json", "").replace("```", "").strip()
+        queries = json.loads(text)
+    except:
+        queries = [query]
+
     return {"queries": queries}
 
 
@@ -181,7 +202,7 @@ def build_graph():
     graph.add_node("plan", plan)
     graph.add_node("decide_tool", decide_tool)
     graph.add_node("retrieve", retrieve)
-    graph.add_node("rerank", rerank)
+
     graph.add_node("generate", generate)
     graph.add_node("evaluate", evaluate)
     graph.add_node("rewrite", rewrite)
@@ -197,8 +218,7 @@ def build_graph():
             "DIRECT": "generate"
         }
     )
-    graph.add_edge("retrieve", "rerank")
-    graph.add_edge("rerank", "generate")
+    graph.add_edge("retrieve", "generate")
     graph.add_edge("generate", "evaluate")
 
     graph.add_conditional_edges(
