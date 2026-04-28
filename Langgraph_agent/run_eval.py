@@ -35,8 +35,8 @@ client = Groq(api_key=api_key)
 
 @run_evaluator
 def correctness_evaluator(run, example):
-    question = example.inputs["input"]
-    prediction = run.outputs["output"]
+    question = example.inputs["question"]
+    prediction = run.outputs["answer"]
     reference = example.outputs.get("answer", "")
 
     prompt = f"""
@@ -130,12 +130,12 @@ Return format:
     return {
         "score": result.get("final_score", 0),
         "comment": result.get("reason", ""),
-        "metadata": result  # keep detailed metrics
+        "metadata": result  
     }
 
 evaluate(
     run_my_agent,
-    data="PFA",
+    data="second_brain_eval_v1",
     evaluators=[correctness_evaluator]
 
 )

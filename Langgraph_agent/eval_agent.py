@@ -5,7 +5,7 @@ graph_app = build_graph()
 
 def run_my_agent(inputs):
     result = graph_app.invoke({
-        "query": inputs["input"]
+        "query": inputs["question"]
     })
 
     return result.get("answer", "")
