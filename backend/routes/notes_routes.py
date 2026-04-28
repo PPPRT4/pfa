@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 #from google import genai
 import requests
-
 try:
     from ..database import get_db
     from ..models import Note
@@ -20,7 +19,8 @@ if PROJECT_ROOT not in sys.path:
 
 from ai.note_analyzer import analyze_note_with_gemini
 from ai.agent import build_agent
-
+from ai.save_to_neo4j import save_to_neo4j
+from ai.notes_ai import ajouter_note
 
 router = APIRouter()
 MCP_URL = "http://localhost:8001"
@@ -34,21 +34,24 @@ def create_note_payload(note: NoteCreate, db: Session):
         title=note.title or "Untitled",
         content=note.content,
         topic=ai_result["topic"],
+
     )
     db.add(new_note)
     db.commit()
     db.refresh(new_note)
+    
+    ajouter_note(ai_result["atomic_note"], str(new_note.id))
 
+    
     try:
-        requests.post(
-            f"{MCP_URL}/add_note",
-            json={
-                "id": str(new_note.id),
-                "text": new_note.content
+        save_to_neo4j(
+            note_id=new_note.id,
+            data={
+                **ai_result
             }
         )
     except Exception as e:
-        print("Vector DB error:", e)
+        print("Neo4j error:", e)
     
 
     return {
@@ -84,8 +87,8 @@ def serialize_note_for_front(note: Note):
 
 @router.post("/add-note")
 def add_note(note: NoteCreate, db: Session = Depends(get_db)):
-    create_note_payload(note, db)
-    return {"status": "success"}
+    result = create_note_payload(note, db)
+    return {"status": "success", "data": result}
 
 
 @router.get("/notes")

@@ -138,4 +138,4 @@ def run_agent(query: str, thread_id: str = "1"):
 # TEST
 # -----------------------------
 if __name__ == "__main__":
-    print(run_agent("Explain AI in 1 sentence"))
+    print(run_agent("What are some notes about docker?"))

@@ -8,8 +8,10 @@ from dotenv import load_dotenv, find_dotenv
 dotenv_path = find_dotenv(usecwd=True)
 if dotenv_path:
     load_dotenv(dotenv_path=dotenv_path)
+    print(f"Loaded .env from {dotenv_path}")
 else:
     load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
+    print("Loaded .env from default location")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

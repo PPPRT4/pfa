@@ -1,11 +1,12 @@
 version: "3.9"
 
 services:
-
+  
   postgres:
     image: postgres:16
     container_name: pfa_postgres
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-pfa_db}
       POSTGRES_USER: ${POSTGRES_USER:-pfa_user}
