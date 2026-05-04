@@ -1,55 +1,75 @@
+import os
 import json
+from dotenv import load_dotenv
+from langchain_groq import ChatGroq
 
-from google import genai
+load_dotenv()
 
 ALLOWED_TOPICS = {"Idea", "Bug", "Reminder", "Task", "Research"}
-_client = genai.Client()
+
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    api_key=os.getenv("GROQ_API_KEY"),
+    temperature=0.0
+)
 
 
-def analyze_note_with_gemini(content: str) -> dict:
+def analyze_note(content: str) -> dict:
     prompt = f"""
-You are classifying a note for a second-brain app.
+You are extracting structured memory for a second-brain system.
 
-Input note:
+Input:
 {content}
 
-Return ONLY valid JSON (no markdown, no extra text) with this exact shape:
+Return ONLY valid JSON:
+
 {{
+  "title": "short meaningful title (max 8 words)",
   "topic": "Idea|Bug|Reminder|Task|Research",
-  "atomic_note": "one clear atomic note sentence"
+  "atomic_note": "one sentence summary",
+  "entities": ["entity1", "entity2"],
+  "relations": [
+    {{
+      "source": "entity1",
+      "type": "RELATED_TO|DEPENDS_ON|PART_OF",
+      "target": "entity2"
+    }}
+  ]
 }}
+
+Rules:
+- title must be concise and informative
+- entities must be noun phrases
+- relations must be valid or []
+- no extra text
 """
 
     try:
-        response = _client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-        raw_text = (response.text or "").strip()
+        response = llm.invoke(prompt)
+        raw = (response.content or "").strip()
 
-        if raw_text.startswith("```"):
-            raw_text = raw_text.strip("`")
-            if raw_text.startswith("json"):
-                raw_text = raw_text[4:]
-            raw_text = raw_text.strip()
+        if raw.startswith("```"):
+            raw = raw.replace("```json", "").replace("```", "").strip()
 
-        parsed = json.loads(raw_text)
+        data = json.loads(raw)
 
-        topic = str(parsed.get("topic", "Idea")).strip()
+        topic = data.get("topic", "Idea")
         if topic not in ALLOWED_TOPICS:
             topic = "Idea"
 
-        atomic_note = str(parsed.get("atomic_note", "")).strip()
-        if not atomic_note:
-            atomic_note = content.strip()
-
         return {
+            "title": data.get("title", "").strip() or "Untitled",
             "topic": topic,
-            "atomic_note": atomic_note,
+            "atomic_note": data.get("atomic_note", content),
+            "entities": data.get("entities", []) or [],
+            "relations": data.get("relations", []) or []
         }
+
     except Exception:
-        # Keep note creation resilient if AI output is malformed or unavailable.
         return {
+            "title": "Untitled",
             "topic": "Idea",
-            "atomic_note": content.strip(),
+            "atomic_note": content,
+            "entities": [],
+            "relations": []
         }

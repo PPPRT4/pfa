@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, START, END
+from ai.neo4j import search_graph
 from ai.notes_ai import chercher_notes
 from google import genai
 from typing import TypedDict, List, Optional
@@ -70,10 +71,12 @@ def route(state):
 
 def retrieve(state):
     queries = state.get("queries", [state.get("query", "")])
-    all_docs = []
+    vector_docs = []
+    graph_docs = []
     for q in queries:
-        all_docs.extend(chercher_notes(q))
-    return {"docs": all_docs}
+        vector_docs.extend(chercher_notes(q))
+        graph_docs.extend(search_graph(q))
+    return {"docs": vector_docs + graph_docs}
 
 
 def generate(state):
