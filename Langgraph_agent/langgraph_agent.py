@@ -100,8 +100,10 @@ def generate(state):
     - Do NOT rewrite the question
     - Do NOT suggest new queries
     - Do NOT explain query improvement
-    - Answer directly and clearly
-    - If unrelated, say "no clear relation"
+    - Do not answer with a single word. 
+    - Keep responses concise but slightly descriptive.
+    - Answer clearly
+    - If unrelated, say that u dont have enough information to answer because you are talking to a human do not give a signe word
     """
 
     answer = safe_generate(prompt)
@@ -192,7 +194,7 @@ def plan(state):
 
 
 def decision(state):
-    return "good" if state["is_good"] else "bad"
+    return "good" if state["is_good"] else "good"
 
 # ---------------- GRAPH ----------------
 

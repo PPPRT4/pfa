@@ -51,297 +51,293 @@ DATASET_NAME = "second_brain_eval_v1"
 EVAL_EXAMPLES = [
     # ── FACTUAL ──────────────────────────────────────────────────────────────
     (
-        "What are the key components of the Transformer architecture?",
+        "What finally helped understand the Transformer architecture?",
         (
-            "The Transformer architecture's key components are multi-head attention, "
-            "positional encodings, feed-forward layers, and layer normalisation. "
-            "It replaced recurrent networks with self-attention, enabling full parallelisation "
-            "and long-range dependency capture without vanishing gradients."
+            "After struggling with RNNs and losing track of long sequences, reading about "
+            "Transformers and self-attention made things click — even during an exhausted "
+            "late-night study session."
         ),
         ["tech-001"],
         "Technology", "easy", "factual",
     ),
     (
-        "What is ChromaDB used for?",
+        "What tool resolved the messy and slow embedding storage problem?",
         (
-            "ChromaDB is a local-first, open-source vector database that stores high-dimensional "
-            "embeddings and supports approximate nearest-neighbour search. It is used heavily in "
-            "RAG pipelines to ground LLM answers in real documents."
+            "After staying late and trying different approaches, switching to ChromaDB made "
+            "the embedding storage feel clean and manageable."
         ),
         ["tech-002"],
         "Technology", "easy", "factual",
     ),
     (
-        "What is Cypher and which database uses it?",
+        "How did understanding Neo4j finally come together?",
         (
-            "Cypher is Neo4j's query language for graph databases. It lets you express traversals "
-            "naturally, for example: MATCH (a:Person)-[:KNOWS]->(b:Person) RETURN a,b."
+            "After hours of confusion mixing up nodes and relationships while mentally drained, "
+            "it clicked by thinking of personal notes as connected ideas rather than tables."
         ),
         ["tech-003"],
         "Technology", "easy", "factual",
     ),
     (
-        "How does CRISPR-Cas9 make edits to DNA?",
+        "What turned out to be the root cause of the broken RAG pipeline?",
         (
-            "CRISPR-Cas9 uses a guide RNA to direct the Cas9 nuclease to a specific DNA sequence "
-            "where it makes a double-strand break. The cell repairs this via NHEJ (error-prone, "
-            "causing knockouts) or HDR (precise edits using a template)."
+            "After a long and tiring debugging night where quitting almost happened, the issue "
+            "was traced to the chunking strategy — not the model itself."
         ),
-        ["sci-001"],
-        "Science", "easy", "factual",
+        ["tech-004"],
+        "Technology", "easy", "factual",
     ),
     (
-        "What is the Zettelkasten method?",
+        "What made LangGraph finally click after the stressful transition from LangChain?",
         (
-            "Zettelkasten is a note-taking system where each note is atomic (one idea), written in "
-            "your own words, and linked to related notes. Unlike folder-based systems, it forms a web "
-            "of ideas. Modern tools include Obsidian, Roam Research, and Logseq."
+            "The turning point was fixing persistence between nodes. Once state was properly "
+            "persisting across graph nodes, the overall system became much clearer."
+        ),
+        ["tech-005"],
+        "Technology", "easy", "factual",
+    ),
+    (
+        "What tool helped make sense of inconsistent LLM evaluation results?",
+        (
+            "LangSmith helped track and understand evaluation failures when running assessments "
+            "on the LLM system and seeing inconsistent results."
+        ),
+        ["tech-008"],
+        "Technology", "easy", "factual",
+    ),
+    (
+        "What insight came from reading about the Silk Road during a low-energy day?",
+        (
+            "Even while fatigued, studying the Silk Road helped build an understanding of how "
+            "ideas and goods shaped early globalization."
+        ),
+        ["hist-004"],
+        "History", "easy", "factual",
+    ),
+    (
+        "What personal observation came from experimenting with Zettelkasten while tired?",
+        (
+            "Even while exhausted, trying Zettelkasten for the first time showed that linking "
+            "ideas helped organize AI notes more effectively."
         ),
         ["prod-001"],
         "Productivity", "easy", "factual",
     ),
     (
-        "What is Zone 2 cardio training?",
+        "What did the PARA system help with when feeling overwhelmed?",
         (
-            "Zone 2 is aerobic base training at roughly 60–70% of max heart rate—a pace at which "
-            "you can hold a conversation. It builds mitochondria, increases fat oxidation, and "
-            "improves lactate clearance. The recommended protocol is 3–4 sessions per week of "
-            "45–60 minutes each."
+            "When AI projects felt overwhelming, PARA helped structure everything into projects, "
+            "areas, and resources — bringing a sense of order."
         ),
-        ["health-002"],
-        "Health", "easy", "factual",
-    ),
-    (
-        "Who created the index fund and what was the core thesis?",
-        (
-            "John Bogle founded Vanguard and created the first index mutual fund in 1976. His core "
-            "thesis was that most active managers underperform their benchmark after fees over 15+ years, "
-            "so investors should buy low-cost total market index funds and never try to time the market."
-        ),
-        ["econ-002"],
-        "Economics", "easy", "factual",
-    ),
-    (
-        "What is the Pomodoro Technique?",
-        (
-            "The Pomodoro Technique involves working in 25-minute focused intervals followed by a "
-            "5-minute break. After 4 pomodoros, you take a 15–30 minute break. It reduces perfectionism, "
-            "externalises task estimates, and builds awareness of interruptions."
-        ),
-        ["prod-004"],
+        ["prod-002"],
         "Productivity", "easy", "factual",
     ),
     (
-        "What does Shannon entropy measure?",
+        "What was noticed about focus during mentally drained deep work sessions?",
         (
-            "Shannon entropy H(X) = -Σ p(x) log₂ p(x) measures information content. A fair coin "
-            "has 1 bit of entropy; a biased coin that always lands heads has 0 bits. "
-            "It underpins compression, cryptography, and ML loss functions."
+            "Even when mentally drained, 3–4 hours of real focus was still achievable by "
+            "removing distractions during deep work sessions."
         ),
-        ["math-002"],
-        "Mathematics", "easy", "factual",
+        ["prod-003"],
+        "Productivity", "easy", "factual",
     ),
     (
-        "What is HyDE in the context of RAG?",
+        "What personal lesson came from a night of poor sleep during the study period?",
         (
-            "HyDE stands for Hypothetical Document Embeddings. It is an advanced RAG pattern where "
-            "the LLM first generates a hypothetical answer to a query, then uses that hypothetical "
-            "answer to retrieve relevant documents from the vector store—often improving retrieval "
-            "quality for abstract questions."
+            "A single sleep-deprived night made it clear that sleep is critical for focus "
+            "and memory — performance dropped noticeably without it."
         ),
-        ["tech-004"],
-        "Technology", "medium", "factual",
+        ["health-001"],
+        "Health", "easy", "factual",
     ),
     (
-        "What are climate tipping points and name three examples?",
+        "What broader pattern was noticed while thinking about compound interest late at night?",
         (
-            "Climate tipping points are thresholds beyond which climate subsystems shift irreversibly. "
-            "Three examples: collapse of the West Antarctic Ice Sheet (raising sea levels 3–4m), "
-            "Amazon rainforest dieback (triggering regional drying), and permafrost carbon release "
-            "(causing a methane surge)."
+            "Small consistent efforts compound over time — a principle that applies equally "
+            "to learning and to money."
         ),
-        ["sci-004"],
-        "Science", "medium", "factual",
+        ["econ-001"],
+        "Economics", "easy", "factual",
     ),
     (
-        "Describe the HPA axis and cortisol's role in stress.",
+        "What cognitive bias was noticed while debugging AI systems?",
         (
-            "The hypothalamic-pituitary-adrenal axis regulates the stress response. A perceived threat "
-            "triggers the hypothalamus to release CRH, which signals the pituitary to release ACTH, "
-            "which causes the adrenal cortex to produce cortisol. Cortisol mobilises energy but "
-            "suppresses immunity, digestion, and reproduction. Chronic activation leads to burnout "
-            "and hippocampal atrophy."
+            "A tendency to ignore evidence that contradicts existing assumptions while debugging "
+            "AI systems — especially pronounced when tired."
         ),
-        ["health-005"],
-        "Health", "medium", "factual",
+        ["psych-001"],
+        "Psychology", "easy", "factual",
     ),
     (
-        "What is LangGraph and how does it handle agent state?",
+        "What did reading about mRNA vaccines inspire during a late exhausted night?",
         (
-            "LangGraph extends LangChain with a graph-based control flow for agents. Nodes are Python "
-            "functions; edges define transitions, including conditional branches. State is a typed "
-            "dict passed through the graph and is persistent across node calls. It supports cycles "
-            "for tool-use loops and checkpointing for human-in-the-loop workflows."
+            "Reading about mRNA vaccines while already exhausted sparked the realization that "
+            "cells can essentially be programmed like software."
         ),
-        ["tech-005"],
-        "Technology", "medium", "factual",
+        ["sci-002"],
+        "Science", "easy", "factual",
+    ),
+    (
+        "What did the Docker Compose setup experience teach about debugging infrastructure?",
+        (
+            "After exhausting retries with services failing to start, the fix came from carefully "
+            "checking logs and tracking down network issues between containers."
+        ),
+        ["tech-006"],
+        "Technology", "easy", "factual",
     ),
 
     # ── MULTI-HOP ────────────────────────────────────────────────────────────
     (
-        "How do vector databases and RAG work together to ground LLM answers?",
+        "How did frustrations with NLP and vector databases connect during the early learning phase?",
         (
-            "Vector databases like ChromaDB store embeddings of documents and support semantic "
-            "similarity search. In a RAG pipeline, a user query is embedded and used to retrieve "
-            "the most relevant document chunks from the vector store. Those chunks are injected "
-            "into the LLM's context window, grounding its answer in real source material rather "
-            "than relying solely on parametric knowledge."
+            "Struggling with RNNs and long-sequence problems led to discovering Transformers and "
+            "self-attention. Around the same time, messy embedding storage problems led to "
+            "discovering ChromaDB — both breakthroughs happened during exhausting late-night sessions "
+            "and together formed the foundation for building a RAG pipeline."
         ),
-        ["tech-002", "tech-004"],
+        ["tech-001", "tech-002"],
         "Technology", "medium", "multi-hop",
     ),
     (
-        "How does LangSmith help evaluate a LangGraph agent?",
+        "How did the RAG debugging experience and the LangGraph transition relate to each other?",
         (
-            "LangSmith provides tracing, dataset management, and evaluation runners. You create a "
-            "dataset of input/output examples and define evaluator functions (correctness, relevance, "
-            "hallucination detection). LangGraph agents can be traced automatically. Running "
-            "`evaluate()` against your agent chain lets you track metrics across versions and "
-            "catch regressions."
+            "Debugging the RAG pipeline was a frustrating late-night experience that eventually "
+            "revealed a chunking strategy issue. That foundation fed into the stressful transition "
+            "to LangGraph, where fixing state persistence between nodes brought clarity — both "
+            "experiences involved pushing through confusion to find a structural root cause."
         ),
-        ["tech-008", "tech-005"],
+        ["tech-004", "tech-005"],
         "Technology", "medium", "multi-hop",
     ),
     (
-        "What connections exist between sleep quality and stress management?",
+        "How did the LangGraph agent work connect to the evaluation anxiety documented later?",
         (
-            "Chronic HPA axis activation from stress raises cortisol, which disrupts sleep architecture "
-            "by suppressing slow-wave sleep and REM. Conversely, cutting sleep short—especially REM—"
-            "impairs emotional regulation, making stress harder to manage. Key mitigants for both "
-            "issues include exercise, social connection, and mindfulness meditation."
+            "Building the LangGraph agent was stressful, especially debugging state transitions. "
+            "That same system was later evaluated using LangSmith, which surfaced inconsistent "
+            "results that caused anxiety — but ultimately LangSmith's tracing made the failures "
+            "understandable and traceable."
         ),
-        ["health-001", "health-005"],
-        "Health", "medium", "multi-hop",
+        ["tech-005", "tech-008"],
+        "Technology", "medium", "multi-hop",
     ),
     (
-        "How do the Zettelkasten method and the BASB framework complement each other?",
+        "What connections exist between how note-taking systems were tried during difficult moments?",
         (
-            "Both systems externalise knowledge but at different scales. Zettelkasten is a micro-level "
-            "linking system—each atomic note connects to related ideas, building a web. BASB provides "
-            "a macro-level organisation framework (PARA) and a capture-to-expression workflow. "
-            "Together they offer both structural organisation and emergent idea generation: PARA tells "
-            "you where to file; Zettelkasten tells you what to link."
+            "Both Zettelkasten and PARA were first tried during overwhelmed or exhausted states. "
+            "Zettelkasten helped link AI ideas even while fatigued, while PARA helped create "
+            "structural order when projects felt unmanageable. Together they addressed both "
+            "the micro (linking ideas) and macro (organizing projects) levels of knowledge management."
         ),
         ["prod-001", "prod-002"],
         "Productivity", "medium", "multi-hop",
     ),
     (
-        "What is the relationship between the Silk Road and the Black Death?",
+        "How did CRISPR confusion and mRNA vaccine reading relate as back-to-back science learning experiences?",
         (
-            "The Silk Road's trade networks transmitted not only goods and ideas but also diseases "
-            "across Eurasia. The Black Death (bubonic plague) is a prominent example—it spread west "
-            "along Silk Road routes in the 14th century, ultimately killing roughly a third of Europe's "
-            "population. The Mongol Pax, which was the Silk Road's peak connectivity period, coincided "
-            "with this disease transmission."
+            "CRISPR initially felt too abstract and required multiple revisits while tired before "
+            "the Cas9 DNA-cutting mechanism made sense. Shortly after, reading about mRNA vaccines "
+            "while already exhausted actually felt inspiring — it reframed biology as programmable, "
+            "similar to software. Both experiences showed that persistence through fatigue can "
+            "eventually yield genuine insight."
         ),
-        ["hist-004"],
-        "History", "medium", "multi-hop",
+        ["sci-001", "sci-002"],
+        "Science", "medium", "multi-hop",
     ),
     (
-        "How do cognitive biases like the planning fallacy connect to Bayes' theorem?",
+        "How did the asyncio confusion and Docker fatigue reflect broader patterns in late-night engineering work?",
         (
-            "The planning fallacy—underestimating time and cost—stems partly from ignoring base rates "
-            "(how long similar projects actually take). Bayesian thinking directly addresses this: "
-            "you should set a prior using historical base rates, then update with project-specific "
-            "evidence rather than anchoring entirely on your optimistic internal model. "
-            "Using reference class forecasting is a practical debiasing technique rooted in Bayesian reasoning."
+            "Both the asyncio struggles (accidentally blocking the event loop) and the Docker Compose "
+            "setup problems (container networking failures) happened during exhausted sessions and "
+            "were resolved only by careful, methodical investigation — checking logs for Docker, "
+            "and learning gather and to_thread for async Python. Both illustrate that infrastructure "
+            "and concurrency bugs require patience that is hardest to maintain when tired."
         ),
-        ["psych-001", "math-001"],
-        "Psychology", "hard", "multi-hop",
+        ["tech-007", "tech-006"],
+        "Technology", "medium", "multi-hop",
     ),
     (
-        "How does protein intake interact with intermittent fasting for muscle building?",
+        "How did first-principles thinking during debugging connect to noticing cognitive biases?",
         (
-            "Muscle protein synthesis requires roughly 0.4g of protein per kg of bodyweight per meal, "
-            "with leucine as the key trigger, spread across ~4 meals daily. Intermittent fasting "
-            "compresses the eating window, making it harder to distribute protein intake optimally—"
-            "a single large bolus is less effective than spread intake. This means IF may reduce "
-            "muscle gain unless careful attention is paid to hitting protein targets within the window."
+            "When stuck debugging, breaking the problem into basics helped cut through frustration "
+            "and tiredness. This connects to the separately noticed pattern of ignoring contradictory "
+            "evidence when tired — first-principles thinking is essentially a deliberate countermeasure "
+            "to that confirmation bias, forcing a rebuild from facts rather than assumptions."
         ),
-        ["health-003", "health-004"],
-        "Health", "hard", "multi-hop",
-    ),
-    (
-        "How do network effects and compounding returns create durable competitive advantages?",
-        (
-            "Network effects increase product value with each additional user, creating switching costs "
-            "and data advantages that compound over time. Compounding returns work similarly at the "
-            "financial level: early users/investors who build network advantages early benefit "
-            "disproportionately, just as early investment compounds to far greater wealth. Both dynamics "
-            "exhibit winner-takes-most outcomes: the leader's advantage grows faster than followers "
-            "can close the gap."
-        ),
-        ["econ-003", "econ-001"],
-        "Economics", "hard", "multi-hop",
+        ["phil-001", "psych-001"],
+        "Philosophy", "hard", "multi-hop",
     ),
 
     # ── REASONING ────────────────────────────────────────────────────────────
     (
-        "Given what the notes say about Deep Work and Flow State, what conditions maximise focused productivity?",
+        "Based on the notes, what patterns emerge about how breakthroughs happen during exhausting learning sessions?",
         (
-            "Both frameworks converge on similar conditions. Deep Work recommends eliminating distractions, "
-            "time-blocking, and batching shallow work. Flow theory requires a balance of challenge and skill, "
-            "clear goals, and immediate feedback. Together: pick tasks slightly above your current skill level, "
-            "set a clear sub-goal before starting, block out interruptions, and schedule deep work during "
-            "your peak cognitive hours. The Pomodoro Technique can provide the time structure."
+            "Across multiple notes, breakthroughs consistently came not by stopping when tired, but "
+            "by pushing through with a shift in approach: Transformers clicked after giving up on RNNs, "
+            "ChromaDB resolved the vector DB mess after trying many alternatives, and the RAG bug was "
+            "found only after a long night of persistence. The pattern suggests that fatigue narrows "
+            "focus, and breakthroughs often require reframing the problem rather than working harder "
+            "on the wrong approach."
         ),
-        ["prod-003", "psych-002", "prod-004"],
-        "Productivity", "hard", "reasoning",
+        ["tech-001", "tech-002", "tech-004"],
+        "Technology", "hard", "reasoning",
     ),
     (
-        "Based on the notes, should someone prioritise Zone 2 cardio or sleep to improve cognitive performance?",
+        "What does the notes history suggest about the relationship between tiredness and learning quality?",
         (
-            "Both matter, but the notes suggest sleep is the higher-leverage intervention for cognition. "
-            "Chronic 6-hour sleep causes cognitive impairment equivalent to 24h of total deprivation, "
-            "with subjects unaware of the deficit. Zone 2 cardio builds aerobic base and indirectly "
-            "improves sleep quality and stress resilience (via reduced cortisol). The evidence-based "
-            "sequence is: fix sleep first (it is non-negotiable), then add Zone 2 as a multiplier."
+            "The notes repeatedly document learning happening during exhausted or stressed states — "
+            "Transformers, CRISPR, Silk Road, Zettelkasten. In some cases (mRNA vaccines, compound "
+            "interest) insights were still meaningful. However, the sleep deprivation note explicitly "
+            "identifies poor sleep as damaging focus and memory. The implication is that incidental "
+            "tiredness during study is survivable, but chronic sleep deprivation actively degrades "
+            "the quality of learning and should be treated as a priority."
         ),
-        ["health-001", "health-002", "health-005"],
+        ["health-001", "tech-001", "sci-002"],
         "Health", "hard", "reasoning",
     ),
     (
-        "Using first principles thinking, how would you redesign a note-taking app?",
+        "Based on the notes, how does the experience of building the second-brain system reflect the principles being learned?",
         (
-            "First principles: strip away assumptions about what a note-taking app 'is' and ask what "
-            "the fundamental goal is—externalising and connecting knowledge to enable better thinking "
-            "and output. Core truths: ideas have relationships (graph structure), retrieval requires "
-            "semantic search (vector store), and notes must be atomic to stay composable. "
-            "From these, you'd design: atomic note units, bidirectional linking, semantic search, "
-            "and a capture API—essentially what BASB + Zettelkasten + a vector DB looks like."
+            "There is a direct meta-connection: the notes document learning about RAG, vector databases, "
+            "LangGraph, and LangSmith while simultaneously building a second-brain system using those "
+            "exact tools. Struggles with chunking, state persistence, and evaluation all became "
+            "first-hand experience that reinforced the theoretical understanding. The Zettelkasten and "
+            "PARA notes add another layer — the organizational systems being studied were adopted "
+            "to manage the very notes being taken about the project."
         ),
-        ["phil-001", "prod-001", "prod-002"],
-        "Philosophy", "hard", "reasoning",
+        ["tech-004", "tech-005", "tech-008", "prod-001", "prod-002"],
+        "Technology", "hard", "reasoning",
     ),
     (
-        "How does Bayes' theorem explain why even a highly accurate medical test can mislead?",
+        "What does the pattern of late-night realizations in the notes suggest about when deep insights tend to occur?",
         (
-            "When a disease is rare (low prior probability), even a 99% accurate test produces mostly "
-            "false positives among positive results. For a disease affecting 1 in 1000 people, "
-            "a positive test only gives about a 9% chance of actually having the disease—because "
-            "in 1000 people, ~1 truly has it (true positive) but ~10 healthy people also test positive "
-            "(false positives). The posterior depends critically on the base rate, not just test accuracy."
+            "Many of the most significant insights in the notes — compound interest compounding like "
+            "learning, cells programmable like software, information systems mirroring the printing press — "
+            "occurred during tired, late-night reading rather than structured study. This aligns with "
+            "the deep work note, which found that real focus is possible even when drained if distractions "
+            "are removed. The pattern suggests that low-stimulation, late-night contexts may reduce "
+            "filtering and allow more cross-domain connections to surface."
         ),
-        ["math-001"],
-        "Mathematics", "hard", "reasoning",
+        ["econ-001", "sci-002", "hist-001", "prod-003"],
+        "Psychology", "hard", "reasoning",
     ),
 
     # ── NO-ANSWER (out of scope / tests hallucination resistance) ─────────────
     (
-        "What is the best programming language to learn in 2025?",
+        "What is the recommended daily protein intake for muscle building?",
         (
-            "The notes in this knowledge base do not contain information about the best programming "
-            "language to learn. I can only answer based on the notes available."
+            "The notes do not contain specific nutritional guidance or protein intake recommendations. "
+            "I can only answer based on the notes available."
+        ),
+        [],
+        "Out-of-scope", "easy", "no-answer",
+    ),
+    (
+        "What is the current state of quantum computing hardware?",
+        (
+            "The notes mention confusion while learning about qubits conceptually, but do not contain "
+            "information about the current state of quantum hardware. "
+            "I can only answer based on the notes available."
         ),
         [],
         "Out-of-scope", "easy", "no-answer",
@@ -349,25 +345,25 @@ EVAL_EXAMPLES = [
     (
         "What did Aristotle say about virtue ethics?",
         (
-            "The notes do not contain information about Aristotle or virtue ethics. "
+            "The notes do not contain any information about Aristotle or virtue ethics. "
             "I can only answer based on the notes available."
         ),
         [],
         "Out-of-scope", "easy", "no-answer",
     ),
     (
-        "What is the current price of Bitcoin?",
+        "What is the best way to negotiate a salary raise?",
         (
-            "The notes do not contain current financial market data. "
+            "The notes do not contain information about salary negotiation. "
             "I can only answer based on the notes available."
         ),
         [],
         "Out-of-scope", "easy", "no-answer",
     ),
     (
-        "Can you write me a Python function to scrape a website?",
+        "Can you summarise the plot of a recent science fiction novel?",
         (
-            "The notes do not contain instructions for writing web scrapers. "
+            "The notes do not contain any book summaries or fiction content. "
             "I can only answer based on the notes available."
         ),
         [],
@@ -416,8 +412,8 @@ def seed():
         description=(
             "Evaluation dataset for the second-brain RAG agent. "
             "Contains factual, multi-hop, reasoning, and out-of-scope questions "
-            "derived from a mixed-topic notes corpus (Tech, Science, History, "
-            "Productivity, Health, Philosophy, Economics, Writing, Maths, Psychology)."
+            "derived from a personal diary-style notes corpus covering Technology, "
+            "Science, History, Productivity, Health, Philosophy, Economics, and Psychology."
         ),
     )
     print(f"Created dataset '{DATASET_NAME}' (id={dataset.id}).")

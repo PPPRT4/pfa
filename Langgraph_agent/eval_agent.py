@@ -8,4 +8,4 @@ def run_my_agent(inputs):
         "query": inputs["question"]
     })
 
-    return result.get("answer", "")
+    return {"answer" : result["answer"]}

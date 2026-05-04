@@ -56,6 +56,22 @@ Reference Answer (ground truth):
 Model Answer:
 {prediction}
 ---------------------
+SPECIAL CASE — NO INFORMATION / NO RELATION:
+
+If the reference answer indicates that the information is NOT present in the notes 
+(e.g., "not in the notes", "cannot answer from notes", "no specific guidance", etc.),
+
+AND the model answer expresses the SAME idea 
+(e.g., "no clear relation", "not found", "no info available"),
+
+THEN:
+- correctness = 1.0
+- relevance = 1.0
+- hallucination = 1.0
+- conciseness = 1.0
+
+These answers MUST be considered semantically equivalent 
+even if wording is completely different.
 
 Evaluation criteria:
 
@@ -81,7 +97,6 @@ If the model adds facts not present in the reference, reduce the score.
 - 1.0: Answer is clear and not unnecessarily verbose
 - 0.5: Slightly verbose
 - 0.0: Overly long or unfocused
-If the model does not attempt to answer, correctness = 0
 ---------------------
 
 Final score rule:
@@ -95,7 +110,8 @@ IMPORTANT RULES:
 - Penalize hallucinations heavily
 If the reference is empty:
     - Ignore hallucination score
-    - Final score = (correctness * 0.6) + (relevance * 0.4)- Output MUST be valid JSON
+    - Final score = (correctness * 0.6) + (relevance * 0.4)
+- Output MUST be valid JSON
 - DO NOT add any text outside JSON
 
 ---------------------
