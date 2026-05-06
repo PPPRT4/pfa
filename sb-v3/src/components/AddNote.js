@@ -31,7 +31,9 @@ export default function AddNote({ onAdd }) {
     setLoading(false);
     showToast(
       apiStatus === "success" ? "success" : "warning",
-      apiStatus === "success" ? "Note added and synced to server!" : "Note saved locally — server unreachable.",
+      apiStatus === "success"
+        ? "Note added and synced to server!"
+        : "Could not save note — server unreachable.",
     );
   };
 
@@ -49,7 +51,7 @@ export default function AddNote({ onAdd }) {
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-white">Capture a thought</h2>
         <p className="text-sm text-ink-400 mt-1">
-          Write anything — AI will classify and summarize it instantly.
+          Write anything — the server will classify and summarize it.
         </p>
       </div>
 
@@ -159,8 +161,8 @@ export default function AddNote({ onAdd }) {
       <div className="grid grid-cols-3 gap-3">
         {[
           { icon: "🧠", title: "Any format",    body: "Ideas, bugs, tasks — anything goes." },
-          { icon: "⚡", title: "Auto-classified", body: "AI detects type & keywords." },
-          { icon: "🔒", title: "Session storage", body: "Notes persist this session." },
+          { icon: "⚡", title: "Auto-classified", body: "Backend detects type & keywords." },
+          { icon: "🔒", title: "Stored on server", body: "Notes are saved in your backend." },
         ].map(({ icon, title, body }) => (
           <div key={title} className="card-sm p-4">
             <span className="text-xl">{icon}</span>

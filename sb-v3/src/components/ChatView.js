@@ -197,7 +197,7 @@ export default function ChatView({ notes, username }) {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I couldn't reach the AI. Check your API key in .env and try again.",
+          content: "Sorry, I couldn't reach the backend. Make sure the API server is running.",
           time: new Date(),
         },
       ]);

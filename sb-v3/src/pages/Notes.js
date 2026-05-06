@@ -4,8 +4,8 @@ import AddNote    from "../components/AddNote";
 import NoteCard   from "../components/NoteCard";
 import StatsPanel from "../components/StatsPanel";
 import ChatView   from "../components/ChatView";
-import { classifyNote, NOTE_TYPES } from "../utils/classifier";
-import { postNote } from "../utils/api";
+import { NOTE_TYPES } from "../utils/classifier";
+import { getNotes, postNote } from "../utils/api";
 
 /* ── Icons ── */
 const IconMenu = () => (
@@ -43,42 +43,34 @@ export default function Notes() {
 
   const username = sessionStorage.getItem("sb_user") || "User";
 
-  /* Restore from sessionStorage */
+  /* Load from backend */
   useEffect(() => {
-    try {
-      const saved = JSON.parse(sessionStorage.getItem("sb_notes") || "[]");
-      if (Array.isArray(saved)) setNotes(saved);
-    } catch {}
-  }, []);
+    let cancelled = false;
 
-  /* Persist on every change */
-  useEffect(() => {
-    sessionStorage.setItem("sb_notes", JSON.stringify(notes));
-  }, [notes]);
+    const load = async () => {
+      const serverNotes = await getNotes();
+      if (!cancelled && Array.isArray(serverNotes)) setNotes(serverNotes);
+    };
+
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Add note handler ── */
   const handleAdd = async (content) => {
-    const id        = Date.now();
-    const apiStatus = await postNote(content);
-    const newNote   = {
-      id, content,
-      createdAt:  new Date().toISOString(),
-      aiLoading:  true,
-      aiResult:   null,
-      apiStatus,
-    };
+    const result = await postNote(content);
 
-    setNotes((prev) => [newNote, ...prev]);
-    setView("notes");
+    if (result.status === "success") {
+      const serverNotes = await getNotes();
+      if (Array.isArray(serverNotes)) {
+        setNotes(serverNotes);
+      } else if (result.note) {
+        setNotes((prev) => [result.note, ...prev]);
+      }
+      setView("notes");
+    }
 
-    /* Simulate AI classification delay */
-    await new Promise((r) => setTimeout(r, 1000));
-    const ai = classifyNote(content);
-    setNotes((prev) =>
-      prev.map((n) => n.id === id ? { ...n, aiResult: ai, aiLoading: false } : n)
-    );
-
-    return apiStatus;
+    return result.status;
   };
 
   /* ── Filtered + searched notes ── */

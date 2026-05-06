@@ -8,7 +8,7 @@ import requests
 try:
     from ..database import get_db
     from ..models import Note
-    from ..schemas import ChatRequest, NoteCreate, NoteUpdate
+    from ..schemas import PromptRequest, NoteCreate, NoteUpdate
 except ImportError:
     from database import get_db
     from models import Note
